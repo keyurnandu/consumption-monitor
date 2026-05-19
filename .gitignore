@@ -7,6 +7,10 @@
 .pbi/
 **/.pbi/
 
+# Auto-generated date tables (Power BI regenerates these on open)
+**/tables/LocalDateTable_*.tmdl
+**/tables/DateTableTemplate_*.tmdl
+
 # OS files
 .DS_Store
 Thumbs.db
