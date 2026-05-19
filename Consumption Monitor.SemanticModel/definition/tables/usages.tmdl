@@ -1,0 +1,145 @@
+table usages
+	lineageTag: 62d12905-7bf9-4346-b024-b583bb305eb3
+
+	measure 'YTD Consumption' = ```
+			
+			        CALCULATE(          
+			            SUM(usages[quantity]),          
+			            FILTER(          
+			                ALLSELECTED(usages[usage_date]), 
+			                usages[usage_date] <= MAX(usages[usage_date]) 
+			        )
+			)
+			```
+		lineageTag: 3b817d49-3b47-4d74-9213-8213159e820a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column application_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2a2d6e92-d5c7-4197-bde5-a13c8c012566
+		summarizeBy: sum
+		sourceColumn: application_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity
+		dataType: double
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: d3147461-1a86-4141-83a9-014361c8eb3b
+		summarizeBy: none
+		sourceColumn: quantity
+
+		annotation SummarizationSetBy = User
+
+	column usage_date
+		dataType: dateTime
+		formatString: mmmm yyyy
+		lineageTag: 7a01a494-1c70-4421-b419-9d9434eea30a
+		summarizeBy: none
+		sourceColumn: usage_date
+
+		variation Variation
+			isDefault
+			relationship: 17d6620d-e205-437d-835b-e39797008de5
+			defaultHierarchy: LocalDateTable_610900c3-af0b-4271-9916-f145613a8113.'Date Hierarchy'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column bu_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 348fa199-932a-4744-b248-f597fd711b41
+		summarizeBy: sum
+		sourceColumn: bu_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column instance_id
+		dataType: string
+		lineageTag: 114c1719-9b3c-45d0-91e2-fab5059380f0
+		summarizeBy: none
+		sourceColumn: instance_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column service
+		dataType: string
+		lineageTag: 7768eb4b-eaa5-4ba5-9aa2-7d2c23d849dc
+		summarizeBy: none
+		sourceColumn: service
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'usage date (filter)' = usages[usage_date]
+		formatString: mm/dd/yy
+		lineageTag: 39870fea-2b98-45f8-8a19-ae1600ea7caf
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: ccc3c95b-02e8-4927-8455-26c6cd2cb497
+			defaultHierarchy: LocalDateTable_e08e1793-ace6-4638-9c5f-7c00e0a231a2.'Date Hierarchy'
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column budget_id_1 =
+			
+			CALCULATE(
+			    MAX('budgets'[budget_id]),
+			    FILTER(
+			        'budgets',
+			        'budgets'[application_id] = 'usages'[application_id] &&
+			        'budgets'[bu_id] = 'usages'[bu_id] &&
+			        'usages'[usage_date] >= 'budgets'[validity_start_date] &&
+			        'usages'[usage_date] <= 'budgets'[validity_end_date]
+			    )
+			)
+		dataType: string
+		lineageTag: cdc7721a-79b9-4c76-b5b9-9c74e29e67b5
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_id
+		dataType: string
+		lineageTag: a23268f4-3d5d-4bbf-98a0-964495d973c0
+		summarizeBy: none
+		sourceColumn: budget_id
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition usages = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("<YOUR_SQL_SERVER>,<PORT>"),
+				    <YOUR_DATABASE> = Source{[Name="<YOUR_DATABASE>"]}[Data],
+				    dbo_usages = <YOUR_DATABASE>{[Schema="dbo",Item="usages"]}[Data],
+				    #"Added Custom" = Table.AddColumn(dbo_usages, "Datadog", each if [application_id] = 3 and Text.Contains([instance_id], "total") then 1 else 0),
+				    #"Filtered Rows" = Table.SelectRows(#"Added Custom", each ([Datadog] = 0)),
+				    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows",{"Datadog"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

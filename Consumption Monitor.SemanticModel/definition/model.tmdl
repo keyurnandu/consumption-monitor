@@ -1,0 +1,36 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["applications","usages","instance","budgets","LastRefresh"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_RemovedChildren = [{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"2cc2dfa5-84db-4978-bc6c-a4d2ed561d6e","fromColumnLocalLineageTag":"9c70544b-5bb7-464d-8466-ef2a1c514786","toTableLocalLineageTag":"3a356039-49a7-4b99-86ac-4887792e8656","toColumnLocalLineageTag":"e55ce257-defb-43b5-adfc-3f71c6a8905d"}},"objectType":"Relationship"}]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table applications
+ref table usages
+ref table instance
+ref table budgets
+ref table LastRefresh
+ref table DateTableTemplate_5936394b-9b21-4736-bd23-a901bd22c095
+ref table LocalDateTable_0942f0bc-a683-4510-ac07-cfd8fbaec44e
+ref table 'dates between start&end'
+ref table LocalDateTable_610900c3-af0b-4271-9916-f145613a8113
+ref table LocalDateTable_62588b87-4f78-40d2-943c-b51c66f6fb69
+ref table LocalDateTable_6eb50677-f990-4f7f-8896-2b6469b2a8ed
+ref table LocalDateTable_0f55390c-2dcb-4346-9868-7265d716531a
+ref table LocalDateTable_75c0d8a7-1106-485e-9f0c-5b09773c5f43
+ref table LocalDateTable_8d106a04-fdd9-468f-ab9b-c0afea085d73
+ref table LocalDateTable_03352d22-eb6c-43d5-a406-e539c7ccb8a5
+ref table LocalDateTable_142c693f-0f89-4c02-9ea5-f5b96b512971
+ref table LocalDateTable_e08e1793-ace6-4638-9c5f-7c00e0a231a2
+
+ref cultureInfo en-US
+

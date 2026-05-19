@@ -1,7 +1,11 @@
-# Power BI files (excluded from public repo — contain sensitive data)
+# Power BI binary files (contain sensitive embedded data)
 *.pbix
 *.pbix.tmp
 *.pbix.lock
+
+# Power BI local/user-specific settings
+.pbi/
+**/.pbi/
 
 # OS files
 .DS_Store

@@ -1,0 +1,65 @@
+relationship 0c696ea8-12c0-47a0-a3ba-ed44808a0a62
+	joinOnDateBehavior: datePartOnly
+	fromColumn: LastRefresh.LastRefresh
+	toColumn: LocalDateTable_0942f0bc-a683-4510-ac07-cfd8fbaec44e.Date
+
+relationship 17d6620d-e205-437d-835b-e39797008de5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: usages.usage_date
+	toColumn: LocalDateTable_610900c3-af0b-4271-9916-f145613a8113.Date
+
+relationship a9f4f11f-9d81-42ff-9e54-0c7193ee048c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'dates between start&end'.validity_start_date
+	toColumn: LocalDateTable_62588b87-4f78-40d2-943c-b51c66f6fb69.Date
+
+relationship 6bf59cdb-a581-4382-b0f1-78cad9545999
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'dates between start&end'.validity_end_date
+	toColumn: LocalDateTable_6eb50677-f990-4f7f-8896-2b6469b2a8ed.Date
+
+relationship 561a36d5-36e4-4a5a-91c4-2e320e74ddb9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'dates between start&end'.usage_date
+	toColumn: LocalDateTable_0f55390c-2dcb-4346-9868-7265d716531a.Date
+
+relationship 3f464cd7-d257-469d-cb63-c0ceef145ce1
+	fromColumn: usages.instance_id
+	toColumn: instance.instance_id
+
+relationship 33583c2e-893e-47d5-8e9a-2dcfc7b39852
+	joinOnDateBehavior: datePartOnly
+	fromColumn: budgets.validity_start_date
+	toColumn: LocalDateTable_75c0d8a7-1106-485e-9f0c-5b09773c5f43.Date
+
+relationship 51edb582-b3c8-4283-8580-1bbd05318393
+	joinOnDateBehavior: datePartOnly
+	fromColumn: budgets.validity_end_date
+	toColumn: LocalDateTable_8d106a04-fdd9-468f-ab9b-c0afea085d73.Date
+
+relationship e8d5a4db-41be-43a6-a77f-2060d1f814b4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'dates between start&end'.'validity_start (filter)'
+	toColumn: LocalDateTable_03352d22-eb6c-43d5-a406-e539c7ccb8a5.Date
+
+relationship 3db974e5-0c58-2b5f-f262-3119eec58007
+	crossFilteringBehavior: bothDirections
+	fromColumn: budgets.application_id
+	toColumn: applications.application_id
+
+	annotation PBI_IsFromSource = FS
+
+relationship 032e9350-6e8a-41f3-a5b7-50bb827e59af
+	joinOnDateBehavior: datePartOnly
+	fromColumn: budgets.'validity_start (filter)'
+	toColumn: LocalDateTable_142c693f-0f89-4c02-9ea5-f5b96b512971.Date
+
+relationship ccc3c95b-02e8-4927-8455-26c6cd2cb497
+	joinOnDateBehavior: datePartOnly
+	fromColumn: usages.'usage date (filter)'
+	toColumn: LocalDateTable_e08e1793-ace6-4638-9c5f-7c00e0a231a2.Date
+
+relationship 7d4c4be8-8153-ac04-d757-b0926ee4bc3f
+	fromColumn: usages.budget_id_1
+	toColumn: budgets.budget_id
+

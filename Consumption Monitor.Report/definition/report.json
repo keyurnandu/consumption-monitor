@@ -1,0 +1,102 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.0.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY24SU08",
+      "reportVersionAtImport": {
+        "visual": "1.8.94",
+        "report": "2.0.94",
+        "page": "1.3.94"
+      },
+      "type": "SharedResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "CircularGauge1458053128559",
+    "LinearGauge1450736844786",
+    "PBI_CV_309E6B47_39A5_4681_808F_132AFB230872",
+    "Tachometer1474636471549"
+  ],
+  "resourcePackages": [
+    {
+      "name": "ZoomChartsPieChartPaidE77E4ED357DC402ABA005987437CF438_OrgStore",
+      "type": "OrganizationalStoreCustomVisual",
+      "items": [
+        {
+          "name": "resources/ZoomChartsPieChartPaidE77E4ED357DC402ABA005987437CF438_OrgStore.pbiviz.json",
+          "path": "1/fa7b1b5a-7b34-4387-94ae-d2c178decee1/ResourcePackage/BlobIdV2-4aae8380-eb59-4d6d-b5f1-45eba4957c22bODV6X2wuyIB1.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "radarChartE89D21F3E4E64221B79113B5015EA81B_OrgStore",
+      "type": "OrganizationalStoreCustomVisual",
+      "items": [
+        {
+          "name": "resources/radarChartE89D21F3E4E64221B79113B5015EA81B_OrgStore.pbiviz.json",
+          "path": "1/fa7b1b5a-7b34-4387-94ae-d2c178decee1/ResourcePackage/BlobIdV2-01a1ac75-514d-413d-a938-6744fed21d50eqAf-cLF2KQ0sSYXRaDe3iekLEUULJCLu74n-ohxvi8=.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "download2822105121403906.png",
+          "path": "download2822105121403906.png",
+          "type": "Image"
+        }
+      ]
+    },
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY24SU08",
+          "path": "BaseThemes/CY24SU08.json",
+          "type": "BaseTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

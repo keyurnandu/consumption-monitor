@@ -1,0 +1,55 @@
+table instance
+	lineageTag: 3a356039-49a7-4b99-86ac-4887792e8656
+
+	column application_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 682aea04-1afb-45a8-aef5-fc21462ceedd
+		summarizeBy: none
+		sourceColumn: application_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_id
+		dataType: int64
+		formatString: 0
+		lineageTag: e55ce257-defb-43b5-adfc-3f71c6a8905d
+		summarizeBy: none
+		sourceColumn: bu_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column instance_id
+		dataType: string
+		lineageTag: 9e61a0bb-495e-4981-95d4-fe55fe426fda
+		summarizeBy: none
+		sourceColumn: instance_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column instance_name
+		dataType: string
+		lineageTag: 66044895-adfd-47cc-b0c0-68d57edfde49
+		summarizeBy: none
+		sourceColumn: instance_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition instance = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("<YOUR_SQL_SERVER>,<PORT>"),
+				    <YOUR_DATABASE> = Source{[Name="<YOUR_DATABASE>"]}[Data],
+				    dbo_instances = <YOUR_DATABASE>{[Schema="dbo",Item="instances"]}[Data],
+				    #"Added Custom" = Table.AddColumn(dbo_instances, "Datadog", each if [application_id] = 3 and Text.Contains([instance_name], "total") then 1 else 0),
+				    #"Filtered Rows" = Table.SelectRows(#"Added Custom", each ([Datadog] = 0)),
+				    #"Removed Columns" = Table.RemoveColumns(#"Filtered Rows",{"Datadog"}),
+				    #"Sorted Rows" = Table.Sort(#"Removed Columns",{{"application_id", Order.Ascending}})
+				in
+				    #"Sorted Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

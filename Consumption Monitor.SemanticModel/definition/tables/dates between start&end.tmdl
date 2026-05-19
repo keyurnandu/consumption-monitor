@@ -1,0 +1,224 @@
+table 'dates between start&end'
+	lineageTag: 4992c3a0-47e8-46ef-9a78-2be89cdfd1c1
+
+	measure YTDConsumption = ```
+			
+			        CALCULATE(          
+			            SUM('dates between start&end'[quantity]),          
+			            FILTER(          
+			                ALLSELECTED('dates between start&end'[usage_date]),     
+			                'dates between start&end'[usage_date] <= MAX('dates between start&end'[usage_date]) 
+			        )
+			)
+			```
+		lineageTag: a29d11fc-a639-47f7-9b9f-4239889170d1
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column application_id
+		formatString: 0
+		lineageTag: 14978606-de4b-4152-8531-2abfc1a7a6c8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[application_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_id
+		formatString: 0
+		lineageTag: 19b0ad99-cb91-4141-acae-03b131d2e9c8
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[bu_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_name
+		lineageTag: 4786dbe1-32b6-4b9a-973f-9a9384a3ed3f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: budgets[bu_name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget
+		lineageTag: f5d46da0-6f2b-4355-b78d-7cc731fab17e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[budget]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '% Budget'
+		lineageTag: ccc191d9-e0ef-4a4c-9a1a-e9f97f783f81
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[% Budget]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column validity_start_date
+		formatString: General Date
+		lineageTag: 188126ab-7a46-45bc-b0c6-e5c80ef52a0e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: budgets[validity_start_date]
+
+		variation Variation
+			isDefault
+			relationship: a9f4f11f-9d81-42ff-9e54-0c7193ee048c
+			defaultHierarchy: LocalDateTable_62588b87-4f78-40d2-943c-b51c66f6fb69.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column validity_end_date
+		formatString: General Date
+		lineageTag: 4c1ed458-4767-4f9e-a388-ae232d317671
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: budgets[validity_end_date]
+
+		variation Variation
+			isDefault
+			relationship: 6bf59cdb-a581-4382-b0f1-78cad9545999
+			defaultHierarchy: LocalDateTable_6eb50677-f990-4f7f-8896-2b6469b2a8ed.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_current
+		lineageTag: 74a031b7-83d0-4240-865c-5f5fe50cb413
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[budget_current]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '% Utilization'
+		lineageTag: b09e1181-35f8-46a0-8c36-df5825d24546
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[% Utilization]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Contract Dates'
+		lineageTag: 71db6e3c-5205-4faf-8aa5-7a789a0d5a34
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: budgets[Contract Dates]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'validity_start (filter)'
+		formatString: General Date
+		lineageTag: 6e31bc63-c640-4b6f-b936-3755fb011a55
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: budgets[validity_start (filter)]
+
+		variation Variation
+			isDefault
+			relationship: e8d5a4db-41be-43a6-a77f-2060d1f814b4
+			defaultHierarchy: LocalDateTable_03352d22-eb6c-43d5-a406-e539c7ccb8a5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column usage_date
+		formatString: General Date
+		lineageTag: 625720e0-6868-4aa6-8110-c5b1d5ebb251
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [usage_date]
+
+		variation Variation
+			isDefault
+			relationship: 561a36d5-36e4-4a5a-91c4-2e320e74ddb9
+			defaultHierarchy: LocalDateTable_0f55390c-2dcb-4346-9868-7265d716531a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column quantity
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: fe18a773-d791-470e-b188-67e475564178
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [quantity]
+
+		annotation SummarizationSetBy = Automatic
+
+	column service
+		lineageTag: c592f232-8622-4410-ab70-300ddd298e42
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [service]
+
+		annotation SummarizationSetBy = Automatic
+
+	column instance_id
+		lineageTag: 681a42ef-9e1f-4e21-8ec8-040f310f2a1e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [instance_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_id
+		lineageTag: 0eaabc74-1f3b-47e5-88af-13efd7718795
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[budget_id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Utilization
+		formatString: 0
+		lineageTag: f84f3300-9c28-4abe-8d3e-d7a719955708
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: budgets[Utilization]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'dates between start&end' = calculated
+		mode: import
+		source = ```
+				
+				GENERATE(
+				    'budgets',
+				    SELECTCOLUMNS(
+				        FILTER(
+				            'usages',
+				            'usages'[application_id] = EARLIER('budgets'[application_id]) &&
+				            'usages'[usage_date] >= EDATE('budgets'[validity_start_date], -12) &&
+				            'usages'[usage_date] <= COALESCE(
+				                CALCULATE(
+				                    MAX('budgets'[validity_end_date]),
+				                    FILTER(
+				                        'budgets',
+				                        'budgets'[application_id] = EARLIER('budgets'[application_id]) &&
+				                        'budgets'[validity_end_date] < 'budgets'[validity_start_date]
+				                    )
+				                ),
+				                'budgets'[validity_start_date]
+				            )
+				        ),
+				        --"application_id", 'usages'[application_id],
+				        "usage_date", 'usages'[usage_date],
+				        "quantity", usages[quantity],
+				        "service", usages[service],
+				        "instance_id", usages[instance_id]
+				    )
+				)
+				
+				```
+
+	annotation PBI_Id = ddfdb446cfbc40769707c705855ce833
+

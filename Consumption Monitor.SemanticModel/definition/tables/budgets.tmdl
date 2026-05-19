@@ -1,0 +1,340 @@
+table budgets
+	lineageTag: 2cc2dfa5-84db-4978-bc6c-a4d2ed561d6e
+
+	measure '% Utilization by Budget Year' = ```
+			
+			
+			VAR _consumption = 
+			    CALCULATE(
+			        SUM('usages'[quantity]),
+			        FILTER(
+			            ALL('usages'),
+			            'usages'[application_id] IN VALUES('budgets'[application_id]) &&
+			            'usages'[usage_date] >= SELECTEDVALUE('budgets'[validity_start_date]) &&
+			            'usages'[usage_date] <= SELECTEDVALUE('budgets'[validity_end_date])
+			        )
+			    )
+			
+			VAR _budget = SELECTEDVALUE('budgets'[budget])
+			
+			RETURN
+			    IF(
+			        NOT ISBLANK(_budget),
+			        1 - DIVIDE(_consumption, _budget),
+			        BLANK()
+			    )
+			
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 97f1e101-f08f-4b0f-8afe-093d4638584d
+
+	measure 'YTD_Consumption by Budget Year' = ```
+			
+			VAR CurrentStart = CALCULATE(MAX('budgets'[validity_start_date]), budgets[bu_id])
+			VAR CurrentEnd = CALCULATE(MAX('budgets'[validity_end_date]), budgets[bu_id])
+			
+			VAR PreviousStart = EDATE(CurrentStart, -12)
+			
+			VAR PreviousEnd = 
+			    CALCULATE(
+			        MAX('budgets'[validity_end_date]),
+			        FILTER(
+			            'budgets',
+			            'budgets'[application_id] &&
+			            'budgets'[validity_end_date] < CurrentStart
+			        )
+			    )
+			
+			RETURN 
+			CALCULATE(
+			    SUM('usages'[quantity]),
+			    FILTER(
+			        'usages',
+			        'usages'[application_id] IN VALUES('budgets'[application_id] ) &&
+			        'usages'[usage date (filter)] > PreviousStart &&
+			        'usages'[usage date (filter)] <= COALESCE(PreviousEnd, CurrentStart)
+			    )
+			)
+			
+			```
+		lineageTag: 358ffefd-d037-43ec-8f3c-359f0c38f42d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Avg Burn / Month' =
+			
+			
+			VAR MonthCount = DATEDIFF(STARTOFMONTH(budgets[validity_start_date]), STARTOFMONTH(budgets[validity_end_date]), MONTH)
+			RETURN
+			DIVIDE([YTD Consumption], MonthCount + 1, BLANK())
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 8038b578-2133-443d-bf98-5c188747c106
+
+	measure 'Usage Ratio' =
+			
+			VAR _application_id = SELECTEDVALUE('budgets'[application_id])
+			VAR _bu_id = SELECTEDVALUE('budgets'[bu_id])
+			VAR _start_date = SELECTEDVALUE('budgets'[validity_start_date])
+			VAR _end_date = SELECTEDVALUE('budgets'[validity_end_date])
+			VAR _budget = SELECTEDVALUE('budgets'[budget])
+			
+			VAR _consumption =
+			    CALCULATE(
+			        SUM('usages'[quantity]),
+			        FILTER(
+			            ALL('usages'),
+			            'usages'[application_id] = _application_id &&
+			            'usages'[bu_id] = _bu_id &&
+			            'usages'[usage_date] >= _start_date &&
+			            'usages'[usage_date] <= _end_date
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        NOT ISBLANK(_budget),
+			        DIVIDE(_consumption, _budget),
+			        BLANK()
+			    )
+		lineageTag: b1467d6e-75b3-4a65-b0cf-d66e0d5a34f5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Target Ratio' = ```
+			
+			VAR DateRange =       
+			    CALCULATETABLE(      
+			        VALUES(usages[usage_date]),      
+			        ALLSELECTED(usages)      
+			    )     
+			VAR StartDate = MINX(DateRange, usages[usage_date])      
+			VAR EndDate = MAXX(DateRange, usages[usage_date])   
+			VAR MonthCount = DATEDIFF(StartDate, EndDate, MONTH) + 1
+			
+			VAR CurrentAverage = 
+			CALCULATE(
+			    SUM(usages[quantity]) 
+			    , usages[bu_id] IN VALUES(usages[bu_id]), applications[application_id]
+			    )
+			    / MonthCount
+			
+			VAR TargetedAverage = 
+			CALCULATE(    
+			    SUM(budgets[budget])     
+			    , usages[bu_id], usages[application_id]
+			    ) 
+			    / 12
+			    
+			RETURN
+			IF(TargetedAverage <> 0,
+			DIVIDE( CurrentAverage, TargetedAverage, 0))
+			```
+		lineageTag: f6c111be-9fde-44e6-a0c9-50ae7bfebca3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column application_id
+		dataType: int64
+		formatString: 0
+		lineageTag: cde2f660-733b-4dd7-a545-9253ba93bcca
+		summarizeBy: none
+		sourceColumn: application_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c70544b-5bb7-464d-8466-ef2a1c514786
+		summarizeBy: sum
+		sourceColumn: bu_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_name
+		dataType: string
+		lineageTag: dcfbbdd8-dd27-4d45-8097-1ee509bca82b
+		summarizeBy: none
+		sourceColumn: bu_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget
+		dataType: double
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 14616e4b-1ec4-4884-8cef-5754242fd217
+		summarizeBy: none
+		sourceColumn: budget
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	column '% Budget' = ```
+			
+			
+			VAR budget_app = 
+			    CALCULATE( SUM(budgets[budget]),
+			        ALLEXCEPT(budgets, budgets[application_id])
+			    )
+			
+			RETURN
+			 budgets[budget] / budget_app
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: ddf9e6bc-191d-48d4-84bb-72f6e0f6314d
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column validity_start_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9f10e47f-a890-4b2e-bb6e-36c012cde325
+		summarizeBy: none
+		sourceColumn: validity_start_date
+
+		variation Variation
+			isDefault
+			relationship: 33583c2e-893e-47d5-8e9a-2dcfc7b39852
+			defaultHierarchy: LocalDateTable_75c0d8a7-1106-485e-9f0c-5b09773c5f43.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column validity_end_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 398535b6-88d0-47b2-aa45-3b6f0ed3212c
+		summarizeBy: none
+		sourceColumn: validity_end_date
+
+		variation Variation
+			isDefault
+			relationship: 51edb582-b3c8-4283-8580-1bbd05318393
+			defaultHierarchy: LocalDateTable_8d106a04-fdd9-468f-ab9b-c0afea085d73.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column budget_current = ```
+			budgets[budget]
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: cf311374-9863-4ece-9a14-7cbe4032b266
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Utilization' = ```
+			
+			VAR _application_id = 'budgets'[application_id]
+			VAR _start_date = 'budgets'[validity_start_date]
+			VAR _end_date = 'budgets'[validity_end_date]
+			VAR _budget = 'budgets'[budget]
+			
+			VAR _consumption =
+			    CALCULATE(
+			        SUM('usages'[quantity]),
+			        FILTER(
+			            'usages',
+			            'usages'[application_id] = _application_id &&
+			            'usages'[bu_id] = budgets[bu_id] &&
+			            'usages'[usage_date] >= _start_date &&
+			            'usages'[usage_date] <= _end_date
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        NOT ISBLANK(_budget),
+			        1 - DIVIDE(_consumption, _budget),
+			        BLANK()
+			    )
+			
+			```
+		formatString: 0%;-0%;0%
+		lineageTag: 09f3a53d-384c-42b6-b2a6-ff38692e8c6b
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Dates' = budgets[validity_start_date] & " - " & budgets[validity_end_date]
+		lineageTag: 3984a132-423c-4936-b94e-951efc43eb32
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'validity_start (filter)' = budgets[validity_start_date]
+		formatString: General Date
+		lineageTag: 4e871986-d9a7-4295-bf12-a7e62cd322d5
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: 032e9350-6e8a-41f3-a5b7-50bb827e59af
+			defaultHierarchy: LocalDateTable_142c693f-0f89-4c02-9ea5-f5b96b512971.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column budget_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b97a74df-e6d9-4321-a247-5f252c0e0519
+		summarizeBy: none
+		sourceColumn: budget_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Utilization = ```
+			
+			VAR _application_id = 'budgets'[application_id]
+			VAR _start_date = 'budgets'[validity_start_date]
+			VAR _end_date = 'budgets'[validity_end_date]
+			VAR _budget = 'budgets'[budget]
+			
+			VAR _consumption =
+			    CALCULATE(
+			        SUM('usages'[quantity]),
+			        FILTER(
+			            'usages',
+			            'usages'[application_id] = _application_id &&
+			            'usages'[bu_id] = budgets[bu_id] &&
+			            'usages'[usage_date] >= _start_date &&
+			            'usages'[usage_date] <= _end_date
+			        )
+			    )
+			
+			RETURN
+			    IF(
+			        NOT ISBLANK(_consumption),
+			        _consumption,
+			        BLANK()
+			    )
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 3b44de93-3db2-499a-88ef-4deca7cee57c
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition budgets = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("<YOUR_SQL_SERVER>,<PORT>"),
+				    <YOUR_DATABASE> = Source{[Name="<YOUR_DATABASE>"]}[Data],
+				    dbo_budgets = <YOUR_DATABASE>{[Schema="dbo",Item="budgets"]}[Data],
+				    #"Changed Type" = Table.TransformColumnTypes(dbo_budgets,{{"validity_start_date", type date}, {"validity_end_date", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
