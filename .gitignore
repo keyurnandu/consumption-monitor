@@ -11,6 +11,12 @@
 **/tables/LocalDateTable_*.tmdl
 **/tables/DateTableTemplate_*.tmdl
 
+# Auto-generated / bundled assets (not meaningful code)
+**/cultures/en-US.tmdl
+**/diagramLayout.json
+**/StaticResources/
+
+
 # OS files
 .DS_Store
 Thumbs.db
